@@ -4,14 +4,11 @@
     <h1>メッセージ新規作成ページ</h1>
     <body>
         <div class="row">
-            <div class="col-xs-12"></div>
-            <div class="col-sm-offset-2 col-sm-8"></div>
-            <div class="col-md-offset-2 col-sm-8"></div>
-            <div class="col-lg-offset-3 col-sm-6"></div>
+            <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-2 col-md-8">
+                {!! Form::model($tasks, ['route' => 'tasks.store']) !!}
+            </div>
         </div>
         
-            {!! Form::model($tasks, ['route' => 'tasks.store']) !!}
-    
         <div class="form-group">
             {!! Form::label('status', 'タイトル:') !!}
             {!! Form::text('status', null, ['class' => 'form-control']) !!}
