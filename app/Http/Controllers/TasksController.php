@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Task;
 
-
 class TasksController extends Controller
 {
     /**
@@ -13,13 +12,32 @@ class TasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    /*public function index()
+    |{
+    |    $tasks = Task::all();
+    |
+    |    return view('tasks.index', [
+    |    'tasks' => $tasks,
+    |    ]);
+    |}
+    */
+        public function index()
     {
-        $tasks = Task::all();
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('tasks.index', [
-        'tasks' => $tasks,
-        ]);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            /*$data += $this->counts($user);
+            |return view('users.show', $data);
+            */return view('tasks.index', $data);
+            }else {
+            return view('welcome');
+        }
     }
 
     /**
@@ -44,18 +62,18 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-        'status' => 'required|max:191',   // 追加
-        'content' => 'required|max:191',
+       $this->validate($request, [
+       'status' => 'required|max:191',   // 追加
+       'content' => 'required|max:191',
     ]);
-    
-        $tasks = new Task;
-        $tasks->status = $request->status;    // 追加
-        $tasks->content = $request->content;
-        $tasks->save();
-        
-        return redirect('/');
-    }
+
+    $request->user()->tasks()->create([
+    'status' => $request->status,
+    'content' => $request->content,
+    ]);
+
+       return redirect('/');
+   }
 
     /**
      * Display the specified resource.

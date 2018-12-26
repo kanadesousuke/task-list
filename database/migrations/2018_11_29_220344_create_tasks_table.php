@@ -16,6 +16,7 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('content');    // content カラム追加
+            $table->string('user_id');    // user_id ユーザID追加
             $table->timestamps();
         });
     }
@@ -29,4 +30,18 @@ class CreateTasksTable extends Migration
     {
         Schema::dropIfExists('tasks');
     }
+    
+     public function store(Request $request)
+    {
+        $this->validate($request, [
+            'content' => 'required|max:191',
+        ]);
+
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+        ]);
+
+        return redirect()->back();
+    }
+    
 }
